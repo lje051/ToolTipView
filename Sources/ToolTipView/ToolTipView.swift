@@ -5,7 +5,7 @@
 //  Created by Jeeeun Lim on 2020/11/24.
 //  Copyright © 2020 Braincommerce. All rights reserved.
 //
-
+import Foundation
 import UIKit
 
 /**
@@ -21,10 +21,13 @@ import UIKit
 
 public struct InfoModel {
     let title: [String]
+    public init(title: [String]) {
+        self.title = title
+    }
 }
 
 open class ToolTipView: UIView {
-    enum ToolTipPosition: Int {
+    public enum ToolTipPosition: Int {
         case left
         case right
         case middle
@@ -41,24 +44,24 @@ open class ToolTipView: UIView {
     ///   - frame:CGRect(x: tipX, y: tipY, width: 원하는 툴팁 가로사이즈, height: 원하는 툴팁 세로사이즈)
     ///   - text: 툴팁안의 텍스트
     ///   - tipPos: 툴팁의 뒤집어진 삼각형 포지션 정렬
-    convenience init(frame: CGRect, model: InfoModel, tipPos: ToolTipPosition) {
+    public convenience init(frame: CGRect, model: InfoModel, tipPos: ToolTipPosition?) {
         self.init(frame: frame)
         self.backgroundColor = .white
-        self.tipPosition = tipPos
+        self.tipPosition = tipPos ?? .right
         createReviewTooltip(model)
     }
 
-    convenience init(frame: CGRect, data: String, tipPos: ToolTipPosition) {
+    public convenience init(frame: CGRect, data: String, tipPos: ToolTipPosition?) {
         self.init(frame: frame)
         self.backgroundColor = .white
-        self.tipPosition = tipPos
+        self.tipPosition = tipPos ?? .right
         createHeaderTooltip(data)
     }
 
-    override func draw(_ rect: CGRect) {
+    open override func draw(_ rect: CGRect) {
         super.draw(rect)
         self.layer.backgroundColor = UIColor.white.cgColor
-        self.layer.borderColor = UIColor.gray100.cgColor
+        self.layer.borderColor = UIColor(red: 229 / 255, green: 230 / 255, blue: 233 / 255, alpha: 1.0).cgColor
         self.layer.borderWidth = 1.0
         self.layer.masksToBounds = false
         self.clipsToBounds = false
@@ -90,7 +93,7 @@ open class ToolTipView: UIView {
 
     fileprivate func createShapeLayer(_ rect: CGRect) {
         self.layer.shadowPath = UIBezierPath(roundedRect: CGRect(x: rect.minX, y: rect.minY, width: rect.width, height: rect.height), cornerRadius: 7.0).cgPath
-        self.layer.shadowColor = UIColor.gray100.cgColor
+        self.layer.shadowColor = UIColor(red: 229 / 255, green: 230 / 255, blue: 233 / 255, alpha: 1.0).cgColor
         self.layer.shadowOffset = CGSize(width: 0.0, height: 4.0)
         self.layer.shadowRadius = 7.0
         self.layer.shadowOpacity = 0.6
@@ -105,7 +108,7 @@ open class ToolTipView: UIView {
         label.font = UIFont(name: "AppleSDGothicNeo-Medium", size: 13.0)
         label.setContentCompressionResistancePriority(.init(1000), for: .horizontal)
         label.numberOfLines = 0
-      //  label.textColor = .green500
+        label.textColor = UIColor(red: 0 / 255, green: 195 / 255, blue: 98 / 255, alpha: 1.0)
         // 여백
         let emptyView = UIView(frame: .zero)
         emptyView.widthAnchor.constraint(equalToConstant: 16).isActive = true
@@ -113,15 +116,15 @@ open class ToolTipView: UIView {
         let orangeSuperView = UIView(frame: .zero)
         orangeSuperView.widthAnchor.constraint(equalToConstant: 6).isActive = true
         let orangeImg = UIView(frame: .zero)
-    //    orangeImg.cornerRadius = 3
-    //    orangeImg.backgroundColor = .orange500
+        orangeImg.layer.cornerRadius = 3
+        orangeImg.backgroundColor = UIColor(red: 255 / 255, green: 152 / 255, blue: 0 / 255, alpha: 1.0)
         orangeSuperView.addSubview(orangeImg)
         orangeImg.anchor(top: orangeSuperView.topAnchor, leading: orangeSuperView.leadingAnchor, bottom: nil, trailing: nil, padding: .init(top: 7, left: 0, bottom: 0, right: 0), size: .init(width: 6, height: 6))
         // 라벨
         let reviewLabel = UILabel(frame: .zero)
         reviewLabel.text = "\(initModel.title[1])"
         reviewLabel.font = UIFont(name: "AppleSDGothicNeo-Medium", size: 13.0)
-     //   reviewLabel.textColor = .gray700
+        reviewLabel.textColor = UIColor(red: 75 / 255, green: 76 / 255, blue: 80 / 255, alpha: 1.0)
         // 여백
         let emptyView2 = UIView(frame: .zero)
         emptyView2.widthAnchor.constraint(equalToConstant: 12).isActive = true
@@ -129,15 +132,15 @@ open class ToolTipView: UIView {
         let blueSuperView = UIView(frame: .zero)
         blueSuperView.widthAnchor.constraint(equalToConstant: 6).isActive = true
         let blueImg = UIView(frame: .zero)
-      //  blueImg.backgroundColor = .blue500
+        blueImg.backgroundColor = UIColor(red: 66 / 255, green: 165 / 255, blue: 245 / 255, alpha: 1.0)
         blueSuperView.addSubview(blueImg)
         blueImg.anchor(top: blueSuperView.topAnchor, leading: blueSuperView.leadingAnchor, bottom: nil, trailing: nil, padding: .init(top: 7, left: 0, bottom: 0, right: 0), size: .init(width: 6, height: 6))
-        blueImg.cornerRadius = 3
+        blueImg.layer.cornerRadius = 3
         //  라벨
         let surveyData = UILabel(frame: .zero)
         surveyData.text = "\(initModel.title[2])"
         surveyData.font = UIFont(name: "AppleSDGothicNeo-Medium", size: 13.0)
-        surveyData.textColor = .gray700
+        surveyData.textColor = UIColor(red: 75 / 255, green: 76 / 255, blue: 80 / 255, alpha: 1.0)
         // 여백
         let emptyView3 = UIView(frame: .zero)
         // 종료버튼 뷰
@@ -163,10 +166,15 @@ open class ToolTipView: UIView {
     fileprivate func createHeaderTooltip(_ data: String) {
         // 라벨
         let label = UILabel(frame: .zero)
-   //     label.attributedText = JPUtils.linespacingAttributedString(data, spacing: 4)
-        label.font = UIFont(name: "AppleSDGothicNeo-Regular", size: 13.0)
+        let attrString: NSMutableAttributedString = .init(string: data, attributes: [
+            .font: UIFont(name: "AppleSDGothicNeo-Regular", size: 13.0)!,
+            .foregroundColor: UIColor(red: 87 / 255, green: 89 / 255, blue: 91 / 255, alpha: 1.0)
+        ])
+        let style = NSMutableParagraphStyle()
+        style.lineSpacing = 4
+        attrString.addAttribute(NSAttributedString.Key.paragraphStyle, value: style, range: NSRange(location: 0, length: attrString.length))
+        label.attributedText = attrString
         label.numberOfLines = 0
-        label.textColor = UIColor.gray600
         // 종료 이미지
         let btnImage = UIImageView(frame: .zero)
         btnImage.image = UIImage(named: "imgCloseTooltip210125")
