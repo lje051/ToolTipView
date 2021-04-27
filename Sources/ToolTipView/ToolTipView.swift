@@ -1,11 +1,10 @@
 //
 //  ToolTipView.swift
-//  jobplanet
 //
-//  Created by Jeeeun Lim on 2020/11/24.
-//  Copyright © 2020 Braincommerce. All rights reserved.
 //
-import Foundation
+//  Created by Jeeeun Lim on 2021/04/26.
+//
+
 import UIKit
 
 /**
@@ -19,20 +18,7 @@ import UIKit
  ToolTipView(frame: CGRect(x: tipX, y: tipY, width: tipWidth, height: tipHeight), text: "전체/연차별 답변 결과도 확인하세요.", tipPos: .right).show(self.view)
  */
 
-public struct InfoModel {
-    let title: [String]
-    public init(title: [String]) {
-        self.title = title
-    }
-}
-
 open class ToolTipView: UIView {
-    public enum ToolTipPosition: Int {
-        case left
-        case right
-        case middle
-    }
-
     private var roundRect: CGRect! // text background
     private let toolTipWidth: CGFloat = 0.0 // 뒤집어진 삼각형 가로
     private let toolTipHeight: CGFloat = 0.0// 뒤집어진 삼각형 세로
@@ -44,14 +30,14 @@ open class ToolTipView: UIView {
     ///   - frame:CGRect(x: tipX, y: tipY, width: 원하는 툴팁 가로사이즈, height: 원하는 툴팁 세로사이즈)
     ///   - text: 툴팁안의 텍스트
     ///   - tipPos: 툴팁의 뒤집어진 삼각형 포지션 정렬
-    public convenience init(frame: CGRect, model: InfoModel, tipPos: ToolTipPosition?) {
+    public convenience init(frame: CGRect, model: ToolTipInfoModel, tipPos: ToolTipPosition? = nil) {
         self.init(frame: frame)
         self.backgroundColor = .white
         self.tipPosition = tipPos ?? .right
         createReviewTooltip(model)
     }
 
-    public convenience init(frame: CGRect, data: String, tipPos: ToolTipPosition?) {
+    public convenience init(frame: CGRect, data: String, tipPos: ToolTipPosition? = nil) {
         self.init(frame: frame)
         self.backgroundColor = .white
         self.tipPosition = tipPos ?? .right
@@ -101,7 +87,7 @@ open class ToolTipView: UIView {
         self.layer.rasterizationScale = UIScreen.main.scale
     }
 
-    fileprivate func createReviewTooltip(_ initModel: InfoModel) {
+    fileprivate func createReviewTooltip(_ initModel: ToolTipInfoModel) {
         // 카테고리명
         let label = UILabel(frame: .zero)
         label.text = initModel.title[0]
@@ -210,121 +196,5 @@ open class ToolTipView: UIView {
             target.addSubview(self)
             target.bringSubviewToFront(self)
         }
-    }
-}
-
-extension UIView {
-    struct AnchoredConstraints {
-        var top, leading, bottom, trailing, width, height: NSLayoutConstraint?
-    }
-
-    class VerticalStackView: UIStackView {
-        init(arrangedSubViews: [UIView], spacing: CGFloat = 0) {
-            super.init(frame: .zero)
-            arrangedSubViews.forEach { addArrangedSubview($0)
-            }
-            self.spacing = spacing
-            self.axis = .vertical
-        }
-
-        required init(coder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
-    }
-
-    @discardableResult
-    func anchor(top: NSLayoutYAxisAnchor?, leading: NSLayoutXAxisAnchor?, bottom: NSLayoutYAxisAnchor?, trailing: NSLayoutXAxisAnchor?, padding: UIEdgeInsets = .zero, size: CGSize = .zero) -> AnchoredConstraints {
-        translatesAutoresizingMaskIntoConstraints = false
-        var anchoredConstraints = AnchoredConstraints()
-
-        if let top = top {
-            anchoredConstraints.top = topAnchor.constraint(equalTo: top, constant: padding.top)
-        }
-
-        if let leading = leading {
-            anchoredConstraints.leading = leadingAnchor.constraint(equalTo: leading, constant: padding.left)
-        }
-
-        if let bottom = bottom {
-            anchoredConstraints.bottom = bottomAnchor.constraint(equalTo: bottom, constant: -padding.bottom)
-        }
-
-        if let trailing = trailing {
-            anchoredConstraints.trailing = trailingAnchor.constraint(equalTo: trailing, constant: -padding.right)
-        }
-
-        if size.width != 0 {
-            anchoredConstraints.width = widthAnchor.constraint(equalToConstant: size.width)
-        }
-
-        if size.height != 0 {
-            anchoredConstraints.height = heightAnchor.constraint(equalToConstant: size.height)
-        }
-
-        [anchoredConstraints.top, anchoredConstraints.leading, anchoredConstraints.bottom, anchoredConstraints.trailing, anchoredConstraints.width, anchoredConstraints.height].forEach { $0?.isActive = true }
-
-        return anchoredConstraints
-    }
-
-    func fillSuperview(padding: UIEdgeInsets = .zero) {
-        translatesAutoresizingMaskIntoConstraints = false
-        if let superviewTopAnchor = superview?.topAnchor {
-            topAnchor.constraint(equalTo: superviewTopAnchor, constant: padding.top).isActive = true
-        }
-
-        if let superviewBottomAnchor = superview?.bottomAnchor {
-            bottomAnchor.constraint(equalTo: superviewBottomAnchor, constant: -padding.bottom).isActive = true
-        }
-
-        if let superviewLeadingAnchor = superview?.leadingAnchor {
-            leadingAnchor.constraint(equalTo: superviewLeadingAnchor, constant: padding.left).isActive = true
-        }
-
-        if let superviewTrailingAnchor = superview?.trailingAnchor {
-            trailingAnchor.constraint(equalTo: superviewTrailingAnchor, constant: -padding.right).isActive = true
-        }
-    }
-
-    func centerInSuperview(size: CGSize = .zero) {
-        translatesAutoresizingMaskIntoConstraints = false
-        if let superviewCenterXAnchor = superview?.centerXAnchor {
-            centerXAnchor.constraint(equalTo: superviewCenterXAnchor).isActive = true
-        }
-
-        if let superviewCenterYAnchor = superview?.centerYAnchor {
-            centerYAnchor.constraint(equalTo: superviewCenterYAnchor).isActive = true
-        }
-
-        if size.width != 0 {
-            widthAnchor.constraint(equalToConstant: size.width).isActive = true
-        }
-
-        if size.height != 0 {
-            heightAnchor.constraint(equalToConstant: size.height).isActive = true
-        }
-    }
-
-    func centerXInSuperview() {
-        translatesAutoresizingMaskIntoConstraints = false
-        if let superViewCenterXAnchor = superview?.centerXAnchor {
-            centerXAnchor.constraint(equalTo: superViewCenterXAnchor).isActive = true
-        }
-    }
-
-    func centerYInSuperview() {
-        translatesAutoresizingMaskIntoConstraints = false
-        if let centerY = superview?.centerYAnchor {
-            centerYAnchor.constraint(equalTo: centerY).isActive = true
-        }
-    }
-
-    func constrainWidth(constant: CGFloat) {
-        translatesAutoresizingMaskIntoConstraints = false
-        widthAnchor.constraint(equalToConstant: constant).isActive = true
-    }
-
-    func constrainHeight(constant: CGFloat) {
-        translatesAutoresizingMaskIntoConstraints = false
-        heightAnchor.constraint(equalToConstant: constant).isActive = true
     }
 }
